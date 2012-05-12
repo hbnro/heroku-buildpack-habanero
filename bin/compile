@@ -56,15 +56,6 @@ PHPLIB="$BUILD_DIR/php/lib/php"
 mkdir -p $PHPLIB/tetlphp
 cp -R . $PHPLIB/tetlphp
 
-ATL="$PHPLIB/tetlphp/stack/app_console.sh"
-cd $BUILD_DIR/www
-
-echo "------> Compiling assets"
-echo "$(ENV=production $ATL build)" | indent
-
-echo "------> Run migrations"
-echo "$(ENV=production $ATL migrate)" | indent
-
 cd $BUILD_DIR
 
 
