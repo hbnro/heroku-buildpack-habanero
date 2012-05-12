@@ -46,7 +46,7 @@ curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 mkdir -p $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-GIT="https://github.com/pateketrueke/tetlphp/tarball/develop"
+GIT="https://github.com/pateketrueke/tetlphp/tarball/master"
 echo "-----> Downloading tetlphp from github"
 curl --silent --max-time 60 --location "$GIT" | tar xz
 
