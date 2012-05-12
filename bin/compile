@@ -56,7 +56,7 @@ PHPLIB="$BUILD_DIR/php/lib/php"
 mkdir -p $PHPLIB/tetlphp
 cp -R . $PHPLIB/tetlphp
 
-ATL="/app/php/bin/php $PHPLIB/tetlphp/stack/initialize.php"
+ATL="$PHPLIB/tetlphp/stack/app_console.sh"
 cd $BUILD_DIR/www
 
 echo "------> Compiling assets"
