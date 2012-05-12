@@ -42,7 +42,6 @@ PHP_URL="https://s3.amazonaws.com/php-lp/php-$PHP_VERSION.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
-ln -s /app/php/bin/php /usr/bin/php
 
 mkdir -p $CACHE_DIR/git
 cd $CACHE_DIR/git
