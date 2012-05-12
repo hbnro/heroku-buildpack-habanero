@@ -46,17 +46,23 @@ curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 mkdir -p $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-GIT="https://github.com/pateketrueke/tetlphp/tarball/master"
+GIT="https://github.com/pateketrueke/tetlphp/tarball/develop"
 echo "-----> Downloading tetlphp from github"
 curl --silent --max-time 60 --location "$GIT" | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
 PHPLIB="$BUILD_DIR/php/lib/php"
 
+cat stack/app_console.sh | sed 's/\/usr/\/app\/php/' > aux.sh
+mv aux.sh stack/app_console.sh
+
 mkdir -p $PHPLIB/tetlphp
 cp -R . $PHPLIB/tetlphp
 
 cd $BUILD_DIR
+
+ln -s $PHPLIB/tetlphp/stack/app_console.sh bin/atl
+chmod +x bin/atl
 
 
 # update config files
