@@ -4,6 +4,10 @@
 # fail fast
 set -e
 
+indent() {
+  sed -u 's/^/       /'
+}
+
 # config
 APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
@@ -37,6 +41,32 @@ curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
 PHP_URL="https://s3.amazonaws.com/php-lp/php-$PHP_VERSION.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --silent --max-time 60 --location "$PHP_URL" | tar xz
+
+
+mkdir -p $CACHE_DIR/git
+cd $CACHE_DIR/git
+
+GIT="https://github.com/pateketrueke/tetlphp/tarball/master"
+echo "-----> Downloading tetlphp from github"
+curl --silent --max-time 60 --location "$GIT" | tar xz
+
+cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
+PHPLIB="$BUILD_DIR/php/lib/php"
+
+mkdir -p $PHPLIB/tetlphp
+cp -R . $PHPLIB/tetlphp
+
+ATL="$PHPLIB/tetlphp/stack/app_console.sh"
+cd $BUILD_DIR/www
+
+echo "------> Compiling assets"
+echo "$(ENV=production $ATL build)" | indent
+
+echo "------> Run migrations"
+echo "$(ENV=production $ATL migrate)" | indent
+
+cd $BUILD_DIR
+
 
 # update config files
 cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
