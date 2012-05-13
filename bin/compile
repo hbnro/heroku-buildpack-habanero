@@ -13,6 +13,7 @@ APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
 PHP_VERSION="5.3.10"
 PHP_PATH="php"
+BRANCH="develop"
 
 BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
@@ -43,10 +44,10 @@ echo "-----> Bundling PHP version $PHP_VERSION"
 curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
 
-mkdir -p $CACHE_DIR/git
+mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-GIT="https://github.com/pateketrueke/tetlphp/tarball/develop"
+GIT="https://github.com/pateketrueke/tetlphp/tarball/$BRANCH"
 echo "-----> Downloading tetlphp from github"
 curl --silent --max-time 60 --location "$GIT" | tar xz
 
@@ -67,9 +68,11 @@ cp $LP_DIR/conf/php.ini php
 mkdir -p bin
 ln -s /app/php/bin/php bin/php
 
-echo "/app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \$1 \$2 \$3" >> bin/atl
+echo "/app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
+
+echo "$(bin/atl build)" | indent
 
 
 cat >>boot.sh <<EOF
