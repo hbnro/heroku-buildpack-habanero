@@ -68,11 +68,9 @@ cp $LP_DIR/conf/php.ini php
 mkdir -p bin
 ln -s /app/php/bin/php bin/php
 
-echo "/app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
+echo "cd /app/www; /app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
-
-echo "$(bin/atl build)" | indent
 
 
 cat >>boot.sh <<EOF
