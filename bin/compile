@@ -68,7 +68,7 @@ cp $LP_DIR/conf/php.ini php
 mkdir -p bin
 ln -s /app/php/bin/php bin/php
 
-echo "cd /app/www; /app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
+echo "ENV=production /app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
 
