@@ -77,7 +77,7 @@ echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"
 chmod +x bin/atl
 
 # execute assets compilation
-echo "-----> Compiling assets..."
+echo "Compiling assets..." | indent
 cd www
 FULL_CMD="$BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build"
 ENV=production LD_LIBRARY_PATH="$BUILD_DIR/php/ext" eval "$FULL_CMD" > /dev/null 2>&1
