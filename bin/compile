@@ -72,6 +72,7 @@ ln -s /app/php/bin/php bin/php
 STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production LD_LIBRARY_PATH=/app/php/ext"
 
+echo "Environment and binaries..." | indent
 echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
