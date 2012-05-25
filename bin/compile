@@ -78,9 +78,9 @@ chmod +x bin/atl
 
 # execute assets compilation
 echo "-----> Compiling assets..."
-ENV=production
-LD_LIBRARY_PATH="$BUILD_DIR/php/ext" && cd www
-echo "$($BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build)" | indent
+cd www
+FULL_CMD="$BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build"
+ENV="production" LD_LIBRARY_PATH="$BUILD_DIR/php/ext" echo "$($FULL_CMD)" | indent
 cd $BUILD_DIR
 
 
