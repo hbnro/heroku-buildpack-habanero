@@ -78,7 +78,7 @@ chmod +x bin/atl
 
 # execute assets compilation
 echo "-----> Compiling assets..."
-echo "$(cd www && $ENVVARS $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY) -- \"build\"" | indent
+echo "$(cd www && $ENVVARS $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build)" | indent
 cd $BUILD_DIR
 
 
