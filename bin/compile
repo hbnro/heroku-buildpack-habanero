@@ -68,7 +68,11 @@ cp $LP_DIR/conf/php.ini php
 mkdir -p bin
 ln -s /app/php/bin/php bin/php
 
-echo "cd /app/www && ENV=production /app/php/bin/php -f /app/php/lib/php/tetlphp/stack/initialize.php -- \"\$@\"" >> bin/atl
+# make atl available on bin too
+ENVVARS="ENV=production LD_LIBRARY_PATH=/app/php/ext"
+STACKY="/app/php/lib/php/tetlphp/stack/initialize.php"
+
+echo "cd /app/www && $ENVVARS /app/php/bin/php -f $STACKY -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
 
