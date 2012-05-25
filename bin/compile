@@ -66,7 +66,9 @@ cp $LP_DIR/conf/php.ini php
 
 # make php available on bin
 mkdir -p bin
-ln -s /app/php/bin/php bin/php
+echo "LD_LIBRARY_PATH=/app/php/ext /app/php/bin/php \"\$@\"" >> bin/php
+chmod +x bin/php
+
 
 # make atl available on bin too
 STACKY="tetlphp/stack/initialize.php"
