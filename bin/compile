@@ -69,12 +69,17 @@ mkdir -p bin
 ln -s /app/php/bin/php bin/php
 
 # make atl available on bin too
+STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production LD_LIBRARY_PATH=/app/php/ext"
-STACKY="/app/php/lib/php/tetlphp/stack/initialize.php"
 
-echo "cd /app/www && $ENVVARS /app/php/bin/php -f $STACKY -- \"\$@\"" >> bin/atl
+echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
+
+# execute assets compilation
+echo "-----> Compiling assets..."
+echo "$(cd www && $ENVVARS $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY) -- \"build\"" | indent
+cd $BUILD_DIR
 
 
 cat >>boot.sh <<EOF
