@@ -6,6 +6,7 @@ cat <<EOF
 addons:
 config_vars:
   ENV: production
+  LD_LIBRARY_PATH: /app/php/ext
 default_process_types:
   web: sh boot.sh
 EOF
