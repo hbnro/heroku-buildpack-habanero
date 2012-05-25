@@ -78,7 +78,8 @@ chmod +x bin/atl
 
 # execute assets compilation
 echo "-----> Compiling assets..."
-eval "$ENVVARS" && cd www
+ENV=production
+LD_LIBRARY_PATH="$BUILD_DIR/php/ext" && cd www
 echo "$($BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build)" | indent
 cd $BUILD_DIR
 
