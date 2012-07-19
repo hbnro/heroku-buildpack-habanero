@@ -89,6 +89,8 @@ eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUI
 
 # logging to stderr
 mkdir -p config/initializers
+
+echo "Redirecting logger to STDERR..." | indent
 curl --silent --max-time 60 --location "$LOGR"  >> config/initializers/stderr_logger.php
 
 
