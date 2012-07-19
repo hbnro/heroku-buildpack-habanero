@@ -11,9 +11,9 @@ indent() {
 # config
 APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
-PHP_VERSION="5.3.10"
+PHP_VERSION="5.4.4"
 PHP_PATH="php"
-BRANCH="master"
+BRANCH="develop"
 
 BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
@@ -35,11 +35,11 @@ if [ -f www/Procfile ]; then
   mv www/Procfile .
 fi
 
-APACHE_URL="https://s3.amazonaws.com/php-lp/apache-$APACHE_VERSION.tar.gz"
+APACHE_URL="http://dl.dropbox.com/u/62064441/apache.tar.gz"
 echo "-----> Bundling Apache version $APACHE_VERSION"
 curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
 
-PHP_URL="https://s3.amazonaws.com/php-lp/php-$PHP_VERSION.tar.gz"
+PHP_URL="http://dl.dropbox.com/u/62064441/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
@@ -66,13 +66,14 @@ cp $LP_DIR/conf/php.ini php
 
 # make php available on bin
 mkdir -p bin
-echo "LD_LIBRARY_PATH=/app/php/ext /app/php/bin/php \"\$@\"" >> bin/php
+
+echo "/app/php/bin/php \"\$@\"" >> bin/php
 chmod +x bin/php
 
 
 # make atl available on bin too
 STACKY="tetlphp/stack/initialize.php"
-ENVVARS="ENV=production LD_LIBRARY_PATH=/app/php/ext"
+ENVVARS="ENV=production"
 
 echo "Environment and binaries..." | indent
 echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
@@ -80,10 +81,16 @@ echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"
 chmod +x bin/atl
 
 # execute assets compilation
-echo "Compiling assets..." | indent
+FULL_CMD="$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY"
+
 cd www
-FULL_CMD="$BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build"
-ENV=production LD_LIBRARY_PATH="$BUILD_DIR/php/ext" eval "$FULL_CMD" > /dev/null 2>&1
+
+echo "Compiling assets..." | indent
+eval "$FULL_CMD -- build" > /dev/null 2>&1
+
+echo "Locking database..." | indent
+eval "$FULL_CMD -- lock" > /dev/null 2>&1
+
 cd $BUILD_DIR
 
 
@@ -97,7 +104,7 @@ tail -F /app/apache/logs/error_log &
 tail -F /app/apache/logs/access_log &
 export LD_LIBRARY_PATH=/app/php/ext
 export PHP_INI_SCAN_DIR=/app/www
-echo "Launching apache"
+echo "Launching Apache"
 exec /app/apache/bin/httpd -DNO_DETACH
 EOF
 

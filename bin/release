@@ -3,7 +3,6 @@
 
 cat <<EOF
 ---
-addons:
 config_vars:
   ENV: production
 default_process_types:
