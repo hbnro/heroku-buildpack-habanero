@@ -35,11 +35,11 @@ if [ -f www/Procfile ]; then
   mv www/Procfile .
 fi
 
-APACHE_URL="http://dl.dropbox.com/u/62064441/apache.tar.gz"
+APACHE_URL="http://dl.dropbox.com/u/2726997/lib/apache.tar.gz"
 echo "-----> Bundling Apache version $APACHE_VERSION"
 curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
 
-PHP_URL="http://dl.dropbox.com/u/62064441/php.tar.gz"
+PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --silent --max-time 60 --location "$PHP_URL" | tar xz
 
