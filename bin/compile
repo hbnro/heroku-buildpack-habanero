@@ -72,6 +72,7 @@ chmod +x bin/php
 
 
 # make atl available on bin too
+LOGR="https://raw.github.com/gist/3145775"
 STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production"
 
@@ -85,6 +86,11 @@ cd www
 
 echo "Compiling assets for production..." | indent
 eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
+
+# logging to stderr
+mkdir -p config/initializers
+curl --silent --max-time 60 --location "$LOGR"  >> config/initializers/stderr_logger.php
+
 
 cd $BUILD_DIR
 
