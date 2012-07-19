@@ -48,7 +48,7 @@ mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
 GIT="https://github.com/pateketrueke/tetlphp/tarball/$BRANCH"
-echo "-----> Downloading tetlphp from github"
+echo "-----> Downloading framework from GitHub"
 curl --silent --max-time 60 --location "$GIT" | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
@@ -81,15 +81,10 @@ echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"
 chmod +x bin/atl
 
 # execute assets compilation
-FULL_CMD="$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY"
-
 cd www
 
-echo "Compiling assets..." | indent
-eval "$FULL_CMD -- build" > /dev/null 2>&1
-
-echo "Locking database..." | indent
-eval "$FULL_CMD -- lock" > /dev/null 2>&1
+echo "Compiling assets for production..." | indent
+eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
 
 cd $BUILD_DIR
 
