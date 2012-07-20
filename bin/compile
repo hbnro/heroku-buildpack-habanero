@@ -77,7 +77,7 @@ STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production"
 
 echo "Environment and binaries..." | indent
-echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" #>> bin/atl
+echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
 
 chmod +x bin/atl
 
