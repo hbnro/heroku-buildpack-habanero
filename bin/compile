@@ -76,9 +76,9 @@ LOGR="https://raw.github.com/gist/3145775"
 STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production"
 
-echo "Prepare environment and binaries..." | indent
+printf "\rPrepare environment and binaries... " | indent
 echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
-printf 'done'
+echo 'done'
 
 chmod +x bin/atl
 
@@ -87,14 +87,14 @@ cd www
 
 printf "\rCompile assets for production... " | indent
 eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
-printf 'done'
+echo 'done'
 
 # logging to stderr
 mkdir -p config/initializers
 
 printf "\rRedirecting logger to STDERR... " | indent
 curl --silent --max-time 60 --location "$LOGR"  >> config/initializers/stderr_logger.php
-printf 'done'
+echo 'done'
 
 
 cd $BUILD_DIR
