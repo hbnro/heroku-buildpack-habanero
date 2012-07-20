@@ -77,7 +77,7 @@ STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production"
 
 echo "Environment and binaries..." | indent
-echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
+echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" #>> bin/atl
 
 chmod +x bin/atl
 
@@ -85,7 +85,7 @@ chmod +x bin/atl
 cd www
 
 echo "Compiling assets for production..." | indent
-eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
+eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" #> /dev/null 2>&1
 
 # logging to stderr
 mkdir -p config/initializers
