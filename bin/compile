@@ -85,7 +85,7 @@ chmod +x bin/atl
 cd www
 
 echo "Compiling assets for production..." | indent
-eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" | indent
+eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build | indent"
 #> /dev/null 2>&1
 
 # logging to stderr
