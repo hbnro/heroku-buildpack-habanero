@@ -4,10 +4,6 @@
 # fail fast
 set -e
 
-indent() {
-  sed -u 's/^/       /'
-}
-
 # config
 APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
@@ -76,7 +72,7 @@ LOGR="https://raw.github.com/gist/3145775"
 STACKY="tetlphp/stack/initialize.php"
 ENVVARS="ENV=production"
 
-printf "\rPrepare environment and binaries... " | indent
+printf "\r       Prepare environment and binaries... "
 echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
 echo 'done'
 
@@ -85,14 +81,14 @@ chmod +x bin/atl
 # execute assets compilation
 cd www
 
-printf "\rCompile assets for production... " | indent
+printf "\r       Compile assets for production... "
 eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
 echo 'done'
 
 # logging to stderr
 mkdir -p config/initializers
 
-printf "\rRedirecting logger to STDERR... " | indent
+printf "\r       Redirecting logger to STDERR... "
 curl --silent --max-time 60 --location "$LOGR"  >> config/initializers/stderr_logger.php
 echo 'done'
 
