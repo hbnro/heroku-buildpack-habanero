@@ -63,30 +63,6 @@ In order to create the packages used by the build pack, you must compile Apache,
     cp /usr/lib/libmcrypt.so.4 /app/php/ext/
 
 
-    # APC
-
-    # wget http://pecl.php.net/get/APC
-    # tar -zxvf APC
-
-    # cd APC-3.1.10
-    # /app/php/bin/phpize
-    # ./configure --enable-apc --enable-apc-mmap --with-php-config=/app/php/bin/php-config
-    # make
-    # make install
-
-
-    # MongoDB
-
-    # wget http://pecl.php.net/get/mongo
-    # tar -zxvf mongo
-
-    # cd mongo-1.2.11
-    # /app/php/bin/phpize
-    # ./configure --with-php-config=/app/php/bin/php-config
-    # make
-    # make install
-
-
     # Create packages
 
     cd /app
