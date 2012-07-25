@@ -81,8 +81,10 @@ chmod +x bin/atl
 # execute assets compilation
 cd www
 
-printf "\r       Compile assets for production... "
-eval "$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY -- build" > /dev/null 2>&1
+ENVCALL="$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY --"
+
+printf "\r       Clean and compile assets for production... "
+eval "$ENVCALL clean && $ENVCALL build" > /dev/null 2>&1
 echo 'done'
 
 # logging to stderr
