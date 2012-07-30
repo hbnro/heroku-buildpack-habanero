@@ -67,16 +67,16 @@ echo "/app/php/bin/php \"\$@\"" >> bin/php
 chmod +x bin/php
 
 
-# make atl available on bin too
+# make hs available on bin too
 LOGR="https://raw.github.com/gist/3145775"
 STACKY="habanero/stack/initialize.php"
 ENVVARS="ENV=production"
 
 printf "\r       Prepare environment and binaries... "
-echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/atl
+echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/hs
 echo 'done'
 
-chmod +x bin/atl
+chmod +x bin/hs
 
 # execute assets compilation
 cd www
