@@ -1,7 +1,7 @@
-Tetlphp build pack
-========================
+Habanero build pack
+===================
 
-This is a build pack for Heroku for Tetl-based apps.
+This is a build pack for Heroku for Habanero apps.
 
 This is based on the [heroku-buildpack-silex](https://github.com/klaussilveira/heroku-buildpack-silex/).
 
