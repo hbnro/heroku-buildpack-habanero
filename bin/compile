@@ -9,7 +9,7 @@ APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
 PHP_VERSION="5.4.5"
 PHP_PATH="php"
-BRANCH="develop"
+BRANCH="master"
 
 BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
