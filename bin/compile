@@ -7,7 +7,7 @@ set -e
 # config
 APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
-PHP_VERSION="5.4.5"
+PHP_VERSION="5.4.9"
 PHP_PATH="php"
 BRANCH="master"
 
@@ -33,11 +33,11 @@ fi
 
 APACHE_URL="http://dl.dropbox.com/u/2726997/lib/apache.tar.gz"
 echo "-----> Bundling Apache version $APACHE_VERSION"
-curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
+curl --max-time 60 -sL "$APACHE_URL" | tar xz
 
 PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
-curl --silent --max-time 60 --location "$PHP_URL" | tar xz
+curl --max-time 60 -sL "$PHP_URL" | tar xz
 
 
 mkdir $CACHE_DIR/git
@@ -45,7 +45,7 @@ cd $CACHE_DIR/git
 
 GIT="https://github.com/pateketrueke/habanero/tarball/$BRANCH"
 echo "-----> Downloading framework from GitHub"
-curl --silent --max-time 60 --location "$GIT" | tar xz
+curl --max-time 60 -sL "$GIT" | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
 PHPLIB="$BUILD_DIR/php/lib/php"
@@ -67,9 +67,33 @@ echo "/app/php/bin/php \"\$@\"" >> bin/php
 chmod +x bin/php
 
 
+# composer dependencies
+COMPOSER_BIN="$CACHE_DIR/composer.phar"
+COMPOSER_URL="http://getcomposer.org/composer.phar"
+COMPOSER_CALL=="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC $COMPOSER_BIN"
+
+GIT_DIR_ORIG=$GIT_DIR
+unset GIT_DIR
+
+echo "-----> Bundling Composer"
+curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
+
+cd /app/php/lib/php/habanero
+eval "$COMPOSER_CALL install --prefer-source"
+cd $BUILD_DIR
+
+if [ -f www/composer.json ]; then
+  cd www
+  echo "-----> Application dependencies"
+  eval "$COMPOSER_CALL install --prefer-source"
+fi
+
+cd $BUILD_DIR
+export GIT_DIR=$GIT_DIR_ORIG
+
+
 # make hs available on bin too
-LOGR="https://raw.github.com/gist/3145775"
-STACKY="habanero/stack/initialize.php"
+STACKY="habanero/bin/initialize.php"
 ENVVARS="ENV=production"
 
 printf "\r       Prepare environment and binaries... "
@@ -84,16 +108,8 @@ cd www
 ENVCALL="$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY --"
 
 printf "\r       Clean and compile assets for production... "
-eval "$ENVCALL clean && $ENVCALL build" > /dev/null 2>&1
+eval "$ENVCALL purge -cjivf && $ENVCALL prepare -cjivf" > /dev/null 2>&1
 echo 'done'
-
-# logging to stderr
-mkdir -p config/initializers
-
-printf "\r       Redirecting logger to STDERR... "
-curl --silent --max-time 60 --location "$LOGR"  >> config/initializers/stderr_logger.php
-echo 'done'
-
 
 cd $BUILD_DIR
 
