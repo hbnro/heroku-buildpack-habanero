@@ -70,7 +70,7 @@ chmod +x bin/php
 # composer dependencies
 COMPOSER_BIN="$CACHE_DIR/composer.phar"
 COMPOSER_URL="http://getcomposer.org/composer.phar"
-COMPOSER_CALL=="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC $COMPOSER_BIN"
+COMPOSER_CALL="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC $COMPOSER_BIN"
 
 GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
