@@ -78,7 +78,7 @@ unset GIT_DIR
 echo "-----> Bundling Composer"
 curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
 
-cd /app/php/lib/php/habanero
+cd "$PHPLIB/habanero"
 eval "$COMPOSER_CALL install --prefer-source"
 cd $BUILD_DIR
 
