@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir>
 
+# helpers
+indent() {
+  sed -u 's/^/       /'
+}
+
 # fail fast
 set -e
 
@@ -79,13 +84,13 @@ echo "-----> Bundling Composer"
 curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
 
 cd "$PHPLIB/habanero"
-eval "$COMPOSER_CALL install --prefer-source"
+eval "$COMPOSER_CALL install --prefer-source" | indent
 cd $BUILD_DIR
 
 if [ -f www/composer.json ]; then
   cd www
   echo "-----> Application dependencies"
-  eval "$COMPOSER_CALL install --prefer-source"
+  eval "$COMPOSER_CALL install --prefer-source" | indent
 fi
 
 cd $BUILD_DIR
