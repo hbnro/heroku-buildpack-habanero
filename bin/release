@@ -3,8 +3,6 @@
 
 cat <<EOF
 ---
-addons:
-  heroku-postgresql:dev
 config_vars:
   ENV: production
 default_process_types:
