@@ -4,7 +4,7 @@
 cat <<EOF
 ---
 addons:
-  shared-database:5mb
+  heroku-postgresql:dev
 config_vars:
   ENV: production
 default_process_types:
