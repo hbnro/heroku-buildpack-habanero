@@ -100,6 +100,37 @@ cd $BUILD_DIR
 export GIT_DIR=$GIT_DIR_ORIG
 
 
+# composer dependencies
+COMPOSER_BIN="$CACHE_DIR/composer.phar"
+COMPOSER_URL="http://getcomposer.org/composer.phar"
+COMPOSER_CALL="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC $COMPOSER_BIN"
+
+GIT_DIR_ORIG=$GIT_DIR
+unset GIT_DIR
+
+echo "-----> Bundling Composer"
+curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
+
+cd "$PHPLIB/habanero"
+
+printf "\r       Installing main dependencies... "
+eval "$COMPOSER_CALL install --prefer-source" > /dev/null 2>&1
+echo 'done'
+
+cd $BUILD_DIR
+
+if [ -f www/composer.json ]; then
+  cd www
+
+  printf "\r       Installing application dependencies... "
+  eval "$COMPOSER_CALL install --prefer-source" > /dev/null 2>&1
+  echo 'done'
+fi
+
+cd $BUILD_DIR
+export GIT_DIR=$GIT_DIR_ORIG
+
+
 # make hs available on bin too
 STACKY="habanero/bin/initialize.php"
 ENVVARS="ENV=production"
