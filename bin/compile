@@ -31,13 +31,26 @@ if [ -f www/Procfile ]; then
   mv www/Procfile .
 fi
 
+
 APACHE_URL="http://dl.dropbox.com/u/2726997/lib/apache.tar.gz"
 echo "-----> Bundling Apache version $APACHE_VERSION"
 curl --max-time 60 -sL "$APACHE_URL" | tar xz
 
+# update config files
+cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
+cp $LP_DIR/conf/php.ini php
+
+
+PHPBIN="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php"
 PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --max-time 60 -sL "$PHP_URL" | tar xz
+
+# make php available on bin
+mkdir -p bin
+
+echo "/app/php/bin/php \"\$@\"" >> bin/php
+chmod +x bin/php
 
 
 mkdir $CACHE_DIR/git
@@ -56,19 +69,6 @@ cp -R . $PHPLIB/habanero
 cd $BUILD_DIR
 
 
-# update config files
-cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
-cp $LP_DIR/conf/php.ini php
-
-# make php available on bin
-mkdir -p bin
-
-echo "/app/php/bin/php \"\$@\"" >> bin/php
-chmod +x bin/php
-
-PHPBIN="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php"
-
-
 # composer dependencies
 COMPOSER_BIN="$CACHE_DIR/composer.phar"
 COMPOSER_URL="http://getcomposer.org/composer.phar"
@@ -76,6 +76,7 @@ COMPOSER_CALL="$PHPBIN -d date.timezone=UTC $COMPOSER_BIN"
 
 GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
+
 
 echo "-----> Setup environment"
 curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
@@ -117,17 +118,6 @@ SAUCE="$ENVVARS $PHPBIN -f $BUILD_DIR/php/lib/php/$STACKY --"
 
 printf "\r       Clean and compile assets for production... "
 eval "$SAUCE purge --all && $SAUCE prepare --all" > /dev/null 2>&1
-echo 'done'
-
-
-# source code minification
-printf "\r       Compressing php files ... "
-
-for file in `find . -type f -not -path "*.git*" | grep "\\.php"`; do
-  eval "$PHPBIN -w $file > $file.tmp"
-  mv "$file.tmp" $file
-done
-
 echo 'done'
 
 cd $BUILD_DIR
