@@ -60,7 +60,7 @@ chmod +x bin/php
 mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-echo "-----> Fetching habanero"
+echo "-----> Downloading habanero"
 curl --max-time 60 -sL $HABANERO_URL | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
@@ -75,7 +75,7 @@ cd $BUILD_DIR
 GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
 
-echo "-----> Fetching composer"
+echo "-----> Downloading composer"
 curl --max-time 60 -sL $COMPOSER_URL > $COMPOSER_BIN
 
 cd $PHPLIB/habanero
@@ -110,7 +110,7 @@ chmod +x bin/hs
 # assets
 cd www
 printf "\r       Clean and compile assets for production... "
-eval "$SAUCE prepare --all" > /dev/null 2>&1
+eval "$SAUCE purge --all && $SAUCE prepare --all" > /dev/null 2>&1
 echo 'done'
 
 cd $BUILD_DIR
