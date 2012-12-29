@@ -66,11 +66,13 @@ mkdir -p bin
 echo "/app/php/bin/php \"\$@\"" >> bin/php
 chmod +x bin/php
 
+PHPBIN="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php"
+
 
 # composer dependencies
 COMPOSER_BIN="$CACHE_DIR/composer.phar"
 COMPOSER_URL="http://getcomposer.org/composer.phar"
-COMPOSER_CALL="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC $COMPOSER_BIN"
+COMPOSER_CALL="$PHPBIN -d date.timezone=UTC $COMPOSER_BIN"
 
 GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
@@ -111,10 +113,21 @@ chmod +x bin/hs
 # execute assets compilation
 cd www
 
-ENVCALL="$ENVVARS LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -f $BUILD_DIR/php/lib/php/$STACKY --"
+SAUCE="$ENVVARS $PHPBIN -f $BUILD_DIR/php/lib/php/$STACKY --"
 
 printf "\r       Clean and compile assets for production... "
-eval "$ENVCALL purge --all && $ENVCALL prepare --all" > /dev/null 2>&1
+eval "$SAUCE purge --all && $SAUCE prepare --all" > /dev/null 2>&1
+echo 'done'
+
+
+# source code minification
+printf "\r       Compressing php files ... "
+
+for file in `find . -type f -not -path "*.git*" | grep "\\.php"`; do
+  eval "$PHPBIN -w $file > $file.tmp"
+  mv "$file.tmp" $file
+done
+
 echo 'done'
 
 cd $BUILD_DIR
