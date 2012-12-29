@@ -41,6 +41,18 @@ PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --max-time 60 -sL $PHP_URL | tar xz
 
+
+# update config files
+cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
+cp $LP_DIR/conf/php.ini php
+
+# make php available on bin
+mkdir -p bin
+
+echo "/app/php/bin/php \"\$@\"" >> bin/php
+chmod +x bin/php
+
+
 mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
@@ -55,17 +67,6 @@ mkdir -p $PHPLIB/habanero
 cp -R . $PHPLIB/habanero
 
 cd $BUILD_DIR
-
-
-# update config files
-cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
-cp $LP_DIR/conf/php.ini php
-
-# make php available on bin
-mkdir -p bin
-
-echo "/app/php/bin/php \"\$@\"" >> bin/php
-chmod +x bin/php
 
 
 # composer dependencies
@@ -137,4 +138,4 @@ EOF
 chmod +x boot.sh
 
 # clean the cache
-rm -rf $CACHE_DIR/*
+rm -rf $CACHE_DIR
