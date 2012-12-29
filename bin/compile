@@ -78,7 +78,7 @@ GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
 
 
-echo "-----> Setup environment"
+echo "-----> Environment"
 curl --max-time 60 -sL "$COMPOSER_URL" > $COMPOSER_BIN
 
 cd "$PHPLIB/habanero"
