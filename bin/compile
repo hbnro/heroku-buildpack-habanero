@@ -60,7 +60,7 @@ chmod +x bin/php
 mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-echo "-----> Fetching habanero from GitHub"
+echo "-----> Fetching habanero"
 curl --max-time 60 -sL $HABANERO_URL | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
@@ -96,6 +96,9 @@ fi
 export GIT_DIR=$GIT_DIR_ORIG
 cd $BUILD_DIR
 
+
+
+echo "-----> Building application"
 
 # console
 printf "\r       Prepare environment and binaries... "
