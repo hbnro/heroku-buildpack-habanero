@@ -1,22 +1,32 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir>
 
-# fail fast
-set -e
+set -e # fail fast
+shopt -s dotglob # include .files when moving things around
 
-# config
-APACHE_VERSION="2.2.22"
-APACHE_PATH="apache"
-PHP_VERSION="5.4.9"
-PHP_PATH="php"
-BRANCH="master"
-
+BPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 BUILD_DIR=$1
 CACHE_DIR=$2
-LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
-# include .files when moving things around
-shopt -s dotglob
+# config
+HABANERO_URL="https://github.com/pateketrueke/habanero/tarball/master"
+APACHE_URL="http://dl.dropbox.com/u/2726997/lib/apache.tar.gz"
+PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
+
+PHPBIN="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php -d date.timezone=UTC"
+PHPLIB="$BUILD_DIR/php/lib/php"
+
+ENVVARS="ENV=production"
+STACKY="habanero/bin/initialize.php"
+SAUCE="$ENVVARS $PHPBIN -f $BUILD_DIR/php/lib/php/$STACKY --"
+
+COMPOSER_BIN="$CACHE_DIR/composer.phar"
+COMPOSER_URL="http://getcomposer.org/composer.phar"
+COMPOSER_CALL="$PHPBIN $COMPOSER_BIN"
+
+APACHE_VERSION="2.2.22"
+PHP_VERSION="5.4.9"
+
 
 cd $BUILD_DIR
 
@@ -32,36 +42,28 @@ fi
 
 
 # backend
-APACHE_URL="http://dl.dropbox.com/u/2726997/lib/apache.tar.gz"
 echo "-----> Bundling Apache version $APACHE_VERSION"
 curl --max-time 60 -sL $APACHE_URL | tar xz
 
-PHPBIN="LD_LIBRARY_PATH=$BUILD_DIR/php/ext $BUILD_DIR/php/bin/php"
-PHP_URL="http://dl.dropbox.com/u/2726997/lib/php.tar.gz"
 echo "-----> Bundling PHP version $PHP_VERSION"
 curl --max-time 60 -sL $PHP_URL | tar xz
 
-
 # update config files
-cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
-cp $LP_DIR/conf/php.ini php
+cp $BPACK_DIR/conf/httpd.conf apache/conf
+cp $BPACK_DIR/conf/php.ini php
 
-# make php available on bin
-mkdir -p bin
-
+mkdir -p bin # make php available on bin
 echo "/app/php/bin/php \"\$@\"" >> bin/php
 chmod +x bin/php
 
-
+# habanero-sauce
 mkdir $CACHE_DIR/git
 cd $CACHE_DIR/git
 
-GIT="https://github.com/pateketrueke/habanero/tarball/$BRANCH"
-echo "-----> Downloading framework from GitHub"
-curl --max-time 60 -sL "$GIT" | tar xz
+echo "-----> Fetching habanero from GitHub"
+curl --max-time 60 -sL $HABANERO_URL | tar xz
 
 cd "$CACHE_DIR/git/$(ls $CACHE_DIR/git)"
-PHPLIB="$BUILD_DIR/php/lib/php"
 
 mkdir -p $PHPLIB/habanero
 cp -R . $PHPLIB/habanero
@@ -69,16 +71,11 @@ cp -R . $PHPLIB/habanero
 cd $BUILD_DIR
 
 
-# composer dependencies
-COMPOSER_BIN="$CACHE_DIR/composer.phar"
-COMPOSER_URL="http://getcomposer.org/composer.phar"
-COMPOSER_CALL="$PHPBIN -d date.timezone=UTC $COMPOSER_BIN"
-
+# composer
 GIT_DIR_ORIG=$GIT_DIR
 unset GIT_DIR
 
-
-echo "-----> Environment"
+echo "-----> Fetching composer"
 curl --max-time 60 -sL $COMPOSER_URL > $COMPOSER_BIN
 
 cd $PHPLIB/habanero
@@ -91,36 +88,32 @@ cd $BUILD_DIR
 
 if [ -f www/composer.json ]; then
   cd www
-
   printf "\r       Application dependencies... "
   eval "$COMPOSER_CALL install --prefer-source" > /dev/null 2>&1
   echo 'done'
 fi
 
-cd $BUILD_DIR
 export GIT_DIR=$GIT_DIR_ORIG
+cd $BUILD_DIR
 
 
-# make hs available on bin too
-ENVVARS="ENV=production"
-STACKY="habanero/bin/initialize.php"
-SAUCE="$ENVVARS $PHPBIN -f $BUILD_DIR/php/lib/php/$STACKY --"
-
+# console
 printf "\r       Prepare environment and binaries... "
 echo "cd /app/www && $ENVVARS /app/php/bin/php -f /app/php/lib/php/$STACKY -- \"\$@\"" >> bin/hs
 echo 'done'
 
 chmod +x bin/hs
 
-# execute assets compilation
+# assets
 cd www
 printf "\r       Clean and compile assets for production... "
-eval "$SAUCE purge --all && $SAUCE prepare --all" > /dev/null 2>&1
+eval "$SAUCE prepare --all" > /dev/null 2>&1
 echo 'done'
 
 cd $BUILD_DIR
 
 
+# www
 cat >>boot.sh <<EOF
 for var in \`env|cut -f1 -d=\`; do
   echo "PassEnv \$var" >> /app/apache/conf/httpd.conf;
@@ -136,6 +129,4 @@ exec /app/apache/bin/httpd -DNO_DETACH
 EOF
 
 chmod +x boot.sh
-
-# clean the cache
-rm -rf $CACHE_DIR
+rm -rf $CACHE_DIR # clean the cache
