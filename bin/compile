@@ -81,7 +81,7 @@ curl --max-time 60 -sL $COMPOSER_URL > $COMPOSER_BIN
 cd $PHPLIB/habanero
 
 printf "\r       Main dependencies... "
-eval "$COMPOSER_CALL install --prefer-dist && $COMPOSER_CALL dump-autoload --optimize" > /dev/null 2>&1
+eval "$COMPOSER_CALL install --prefer-dist && $COMPOSER_CALL dump-autoload --optimize" #> /dev/null 2>&1
 echo 'done'
 
 cd $BUILD_DIR
@@ -89,7 +89,7 @@ cd $BUILD_DIR
 if [ -f www/composer.json ]; then
   cd www
   printf "\r       Application dependencies... "
-  eval "$COMPOSER_CALL install --prefer-dist && $COMPOSER_CALL dump-autoload --optimize" > /dev/null 2>&1
+  eval "$COMPOSER_CALL install --prefer-dist && $COMPOSER_CALL dump-autoload --optimize" #> /dev/null 2>&1
   echo 'done'
 fi
 
@@ -110,7 +110,7 @@ chmod +x bin/hs
 # assets
 cd www
 printf "\r       Clean and compile assets for production... "
-eval "$SAUCE purge --all && $SAUCE prepare --all" > /dev/null 2>&1
+eval "$SAUCE purge --all && $SAUCE prepare --all" #> /dev/null 2>&1
 echo 'done'
 
 cd $BUILD_DIR
